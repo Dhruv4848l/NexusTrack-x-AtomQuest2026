@@ -28,6 +28,7 @@ const sendEmail = async ({ to, subject, html }) => {
   // MUST be 'onboarding@resend.dev' unless a custom domain is verified.
   const payload = JSON.stringify({
     from: 'AtomQuest <onboarding@resend.dev>',
+    reply_to: 'dhruvmajiever1920@gmail.com',
     to: [to],
     subject: subject,
     html: html,
