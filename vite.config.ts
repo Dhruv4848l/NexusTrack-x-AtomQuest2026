@@ -2,17 +2,15 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import tsConfigPaths from "vite-tsconfig-paths";
-import { tanstackStart } from "@tanstack/react-start/plugin/vite";
+import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 
-// Note: Cloudflare Workers plugin removed — deploying to Vercel + Render, not CF Workers.
+// Pure SPA build — no SSR, no Cloudflare Workers. Deploys to Vercel as static site.
 export default defineConfig({
   plugins: [
     tailwindcss(),
-    tsConfigPaths({ projects: ["./tsconfig.json"] }),
-    tanstackStart({
-      server: { entry: "server" },
-    }),
+    TanStackRouterVite({ target: "react", autoCodeSplitting: true }),
     react(),
+    tsConfigPaths({ projects: ["./tsconfig.json"] }),
   ],
   server: {
     host: "::",
