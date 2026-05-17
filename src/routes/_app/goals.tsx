@@ -5,7 +5,7 @@ import { useAuth } from "@/lib/auth-context";
 import { PageHeader, NeuCard, StatusPill } from "@/components/app/ui";
 import { THRUST_AREAS, UOM_LABELS, UOM_TYPES } from "@/lib/scoring";
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Trash2, Save, Send, Lock, MessageSquare } from "lucide-react";
+import { Plus, Trash2, Save, Send, Lock, MessageSquare, Printer } from "lucide-react";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/_app/goals")({
@@ -99,6 +99,9 @@ function GoalsPage() {
         actions={
           <>
             {sheetQ.data?.sheet?.status && <StatusPill status={sheetQ.data.sheet.status} />}
+            <button onClick={() => window.print()} className="pill px-4 py-2 text-sm font-semibold bg-secondary inline-flex items-center gap-2 no-print">
+              <Printer className="w-4 h-4" /> Print PDF
+            </button>
             {!locked && !submitted && (
               <>
                 <button onClick={() => persist(false)} className="pill px-4 py-2 text-sm font-semibold bg-secondary inline-flex items-center gap-2"><Save className="w-4 h-4" /> Save draft</button>

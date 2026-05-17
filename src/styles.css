@@ -184,3 +184,33 @@
   border-radius: 9999px;
 }
 @utility text-balance { text-wrap: balance; }
+
+@media print {
+  /* Hide UI elements not needed in PDF */
+  nav, .no-print, button, a[href^="/"] {
+    display: none !important;
+  }
+  
+  /* Reset neumorphic styles for clean paper printing */
+  body, html {
+    background: white !important;
+    color: black !important;
+  }
+  
+  .neu-card, .neu-card-sm, .neu-inset {
+    background: white !important;
+    box-shadow: none !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 0.5rem !important;
+  }
+  
+  /* Keep grid layouts but ensure they don't break across pages */
+  .grid {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure text colors are high contrast */
+  .text-muted-foreground {
+    color: #4b5563 !important;
+  }
+}
