@@ -30,6 +30,29 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// Rate Limiting (Suggestion 3)
+const rateLimit = require('express-rate-limit');
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per window
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many requests from this IP, please try again after 15 minutes' }
+});
+
+const authLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minute
+  max: 5, // Limit each IP to 5 requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { message: 'Too many login attempts, please try again after a minute' }
+});
+
+// Apply limiters
+app.use('/api/auth', authLimiter);
+app.use('/api', generalLimiter);
+
 // Health check
 app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', message: 'AtomQuest API is running 🚀', timestamp: new Date().toISOString() });
