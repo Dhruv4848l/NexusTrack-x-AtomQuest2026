@@ -37,6 +37,9 @@ export const authApi = {
   me: () => api.get<{ user: AQUser }>("/auth/me"),
   updateMe: (data: Partial<AQUser>) => api.patch<{ user: AQUser }>("/auth/me", data),
   changePassword: (data: any) => api.post("/auth/change-password", data),
+  uploadAvatar: (formData: FormData) => api.post<{ user: any }>("/auth/avatar", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+  }),
   requestForgotPassword: (identifier: string) => api.post("/auth/forgot-password/request", { identifier }),
   verifyForgotPassword: (data: any) => api.post("/auth/forgot-password/verify", data),
 };
