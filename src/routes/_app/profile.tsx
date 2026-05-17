@@ -44,6 +44,29 @@ function ProfilePage() {
     }
   }
 
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    if (file.size > 2 * 1024 * 1024) {
+      return toast.error("Image size must be less than 2MB");
+    }
+    
+    const formData = new FormData();
+    formData.append("avatar", file);
+    
+    setBusy(true);
+    try {
+      await authApi.uploadAvatar(formData);
+      toast.success("Profile image updated");
+      await refresh();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message ?? err.message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   async function updatePassword(e: React.FormEvent) {
     e.preventDefault();
     if (newPass !== repeatPass) return toast.error("Passwords do not match");
@@ -78,9 +101,20 @@ function ProfilePage() {
                     user.first_name[0]
                   )}
                 </div>
-                <button className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-background border border-border shadow-sm hover:shadow-md transition group-hover:scale-110">
+                <button 
+                  type="button"
+                  onClick={() => document.getElementById('avatar-input')?.click()}
+                  className="absolute -bottom-2 -right-2 p-2 rounded-xl bg-background border border-border shadow-sm hover:shadow-md transition group-hover:scale-110"
+                >
                   <Camera className="w-4 h-4 text-muted-foreground" />
                 </button>
+                <input 
+                  id="avatar-input"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarChange}
+                />
               </div>
               <div>
                 <h2 className="text-2xl font-display font-bold">{user.first_name} {user.last_name}</h2>

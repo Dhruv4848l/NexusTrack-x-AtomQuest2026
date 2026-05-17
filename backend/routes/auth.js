@@ -5,6 +5,9 @@ const User = require('../models/User');
 const { protect } = require('../middleware/auth');
 const { validatePassword } = require('../utils/validation');
 const crypto = require('crypto');
+const multer = require('multer');
+const path = require('path');
+const fs = require('fs');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
@@ -142,6 +145,46 @@ router.post('/forgot-password/verify', async (req, res) => {
 // GET /api/auth/me — get current user
 router.get('/me', protect, async (req, res) => {
   res.json({ user: req.user });
+});
+
+// POST /api/auth/avatar — upload profile image
+const dir = './uploads';
+if (!fs.existsSync(dir)) {
+  fs.mkdirSync(dir);
+}
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => cb(null, dir),
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, 'avatar-' + req.user._id + '-' + uniqueSuffix + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({ 
+  storage,
+  limits: { fileSize: 2 * 1024 * 1024 }, // 2MB
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+      cb(null, true);
+    } else {
+      cb(new Error('Only images are allowed'));
+    }
+  }
+});
+
+router.post('/avatar', protect, upload.single('avatar'), async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
+    
+    const user = await User.findById(req.user._id);
+    user.profile_image = `/uploads/${req.file.filename}`;
+    await user.save();
+    
+    res.json({ user });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
 });
 
 // PATCH /api/auth/me — update own profile
