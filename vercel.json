@@ -1,8 +1,12 @@
 {
   "buildCommand": "npm run build",
   "outputDirectory": "dist/client",
-  "framework": "vite",
+  "framework": null,
   "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://atomquest-backend-mvdi.onrender.com/api/$1"
+    },
     {
       "source": "/(.*)",
       "destination": "/index.html"
