@@ -42,11 +42,11 @@ const generalLimiter = rateLimit({
 });
 
 const authLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, // 1 minute
-  max: 5, // Limit each IP to 5 requests per minute
+  windowMs: 5 * 60 * 1000, // 5 minutes
+  max: 30, // Limit each IP to 30 login attempts per 5 minutes
   standardHeaders: true,
   legacyHeaders: false,
-  message: { message: 'Too many login attempts, please try again after a minute' }
+  message: { message: 'Too many login attempts, please try again after a few minutes' }
 });
 
 // Apply limiters
