@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
 import { authApi } from "@/lib/api";
@@ -34,6 +34,32 @@ function Login() {
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
+  useEffect(() => {
+    // Handle SSO Callback
+    const params = new URLSearchParams(window.location.search);
+    const ssoToken = params.get("sso_token");
+    const ssoUserStr = params.get("sso_user");
+    const err = params.get("error");
+    
+    if (ssoToken && ssoUserStr) {
+      try {
+        const ssoUser = JSON.parse(decodeURIComponent(ssoUserStr));
+        // Default active role based on user roles
+        const primaryRole = ssoUser.roles.includes("admin") ? "admin" 
+                          : ssoUser.roles.includes("manager") ? "manager" 
+                          : "employee";
+        localStorage.setItem("activeRole", primaryRole);
+        setAuth(ssoToken, ssoUser);
+        toast.success("Successfully signed in with Microsoft!");
+        nav({ to: "/dashboard" });
+      } catch (e) {
+        toast.error("Failed to parse SSO data");
+      }
+    } else if (err) {
+      toast.error(`SSO Error: ${err}`);
+    }
   }, []);
 
   async function submit(e: React.FormEvent) {
@@ -179,6 +205,27 @@ function Login() {
 
             <button disabled={busy} className="pill w-full px-5 py-3.5 mt-2 text-sm font-bold text-primary-foreground disabled:opacity-60 transition-all active:scale-[0.98]" style={{ background: "var(--gradient-cool)", boxShadow: "var(--shadow-soft-sm)" }}>
               {busy ? "Signing in…" : "Sign in to GoalPortal"}
+            </button>
+
+            <div className="relative flex items-center py-2">
+              <div className="flex-grow border-t border-border/50"></div>
+              <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-semibold uppercase tracking-wider">Or</span>
+              <div className="flex-grow border-t border-border/50"></div>
+            </div>
+
+            <button 
+              type="button" 
+              onClick={() => { window.location.href = "http://localhost:5000/api/auth/entra/login"; }}
+              className="pill w-full px-5 py-3.5 text-sm font-bold text-foreground bg-secondary hover:bg-secondary/80 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" 
+              style={{ boxShadow: "var(--shadow-soft-sm)" }}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 21 21">
+                <path fill="#f25022" d="M1 1h9v9H1z"/>
+                <path fill="#00a4ef" d="M1 11h9v9H1z"/>
+                <path fill="#7fba00" d="M11 1h9v9h-9z"/>
+                <path fill="#ffb900" d="M11 11h9v9h-9z"/>
+              </svg>
+              Sign in with Microsoft
             </button>
           </form>
 

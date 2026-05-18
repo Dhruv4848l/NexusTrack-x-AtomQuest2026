@@ -59,6 +59,7 @@ app.get('/api/health', (_req, res) => {
 });
 
 // Routes
+app.use('/api/auth/entra', require('./routes/entra')); // Microsoft SSO
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/cycles', require('./routes/cycles'));
