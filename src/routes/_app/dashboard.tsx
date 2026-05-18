@@ -140,18 +140,20 @@ function Dashboard() {
         </NeuCard>
 
         <NeuCard>
-          <h3 className="font-display text-lg font-semibold mb-4">Composite</h3>
-          <div className="relative" style={{ height: "256px" }}>
+          <h3 className="font-display text-lg font-semibold mb-2">Composite</h3>
+          <div className="relative" style={{ height: "210px" }}>
             <ResponsiveContainer width="100%" height="100%">
               <RadialBarChart innerRadius="60%" outerRadius="90%" data={[{ name: "score", value: Math.round(avgScore) }]} startAngle={90} endAngle={-270}>
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                 <RadialBar background dataKey="value" cornerRadius={20} fill="oklch(0.62 0.17 275)" />
               </RadialBarChart>
             </ResponsiveContainer>
-            <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               <div className="font-display text-4xl font-bold">{Math.round(avgScore)}%</div>
-              <div className="text-xs text-muted-foreground mt-1">Weighted achievement</div>
             </div>
+          </div>
+          <div className="text-center mt-2">
+            <div className="text-xs text-muted-foreground">Weighted achievement</div>
           </div>
         </NeuCard>
       </div>
