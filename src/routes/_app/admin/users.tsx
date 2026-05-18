@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { usersApi } from "@/lib/api";
+import { usersApi, authApi } from "@/lib/api";
 import { PageHeader, NeuCard } from "@/components/app/ui";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";

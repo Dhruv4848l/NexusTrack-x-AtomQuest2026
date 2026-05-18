@@ -44,11 +44,7 @@ function Login() {
       localStorage.setItem("activeRole", selectedRole);
       setAuth(data.token, data.user);
       toast.success("Welcome back!");
-      if (data.is_first_login) {
-        nav({ to: "/first-login" });
-      } else {
-        nav({ to: "/dashboard" });
-      }
+      nav({ to: "/dashboard" });
     } catch (err: any) {
       toast.error(err.response?.data?.message ?? err.message);
     } finally {

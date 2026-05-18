@@ -29,9 +29,9 @@ function FirstLogin() {
     if (newPass !== repeatPass) return toast.error("New passwords do not match");
     
     // Constraint check
-    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,20}$/;
+    const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#\-_.\^])[A-Za-z\d@$!%*?&#\-_.\^]{8,30}$/;
     if (!regex.test(newPass)) {
-      return toast.error("Password must be 8-20 chars with mixed case, number, and special char.");
+      return toast.error("Password must be 8-30 chars with mixed case, number, and special char.");
     }
 
     setBusy(true);

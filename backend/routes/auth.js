@@ -8,6 +8,8 @@ const crypto = require('crypto');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN || '7d' });
@@ -148,16 +150,18 @@ router.get('/me', protect, async (req, res) => {
 });
 
 // POST /api/auth/avatar — upload profile image
-const dir = './uploads';
-if (!fs.existsSync(dir)) {
-  fs.mkdirSync(dir);
-}
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, dir),
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, 'avatar-' + req.user._id + '-' + uniqueSuffix + path.extname(file.originalname));
+const storage = new CloudinaryStorage({
+  cloudinary: cloudinary,
+  params: {
+    folder: 'atomquest_profiles',
+    allowed_formats: ['jpg', 'png', 'jpeg', 'webp'],
+    transformation: [{ width: 500, height: 500, crop: 'limit' }]
   }
 });
 
@@ -178,7 +182,7 @@ router.post('/avatar', protect, upload.single('avatar'), async (req, res) => {
     if (!req.file) return res.status(400).json({ message: 'No file uploaded' });
     
     const user = await User.findById(req.user._id);
-    user.profile_image = `/uploads/${req.file.filename}`;
+    user.profile_image = req.file.path; // Cloudinary returns the URL here
     await user.save();
     
     res.json({ user });
