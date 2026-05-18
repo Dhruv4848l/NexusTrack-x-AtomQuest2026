@@ -79,4 +79,26 @@ router.get('/team/my', protect, requireRole('admin', 'manager'), async (req, res
   }
 });
 
+// DELETE /api/users/:id — delete a user (admin + database_admin only)
+router.delete('/:id', protect, requireRole('admin', 'database_admin'), async (req, res) => {
+  try {
+    if (req.params.id === req.user._id.toString())
+      return res.status(400).json({ message: 'You cannot delete your own account' });
+
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    // Safety guard: protect system accounts
+    const PROTECTED = ['admin@atomberg.com', 'dba@atomberg.com'];
+    if (PROTECTED.includes(user.email))
+      return res.status(403).json({ message: 'This system account cannot be deleted' });
+
+    await User.findByIdAndDelete(req.params.id);
+    await logAudit(req.user._id, 'user_deleted', req.params.id, { email: user.email, name: `${user.first_name} ${user.last_name}` });
+    res.json({ ok: true, message: `User ${user.first_name} ${user.last_name} has been deleted` });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

@@ -5,7 +5,7 @@ import { PageHeader, NeuCard } from "@/components/app/ui";
 import { toast } from "sonner";
 import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, UserPlus, Users as UsersIcon, Shield, Search, X } from "lucide-react";
+import { Plus, UserPlus, Users as UsersIcon, Shield, Search, X, Trash2 } from "lucide-react";
 
 export const Route = createFileRoute("/_app/admin/users")({
   head: () => ({ meta: [{ title: "People · AtomQuest" }] }),
@@ -93,6 +93,7 @@ function Users() {
                       <th className="py-2 pr-3">Dept & ID</th>
                       <th className="py-2 pr-3">Assigned Manager</th>
                       <th className="py-2 pr-3">System Roles</th>
+                      <th className="py-2 pr-3">Actions</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -233,6 +234,21 @@ function UserRow({ user: p, allUsers, onUpdate }: { user: any; allUsers: any[]; 
             );
           })}
         </div>
+      </td>
+      <td className="py-3 pr-3">
+        <button
+          onClick={async () => {
+            if (!confirm(`Are you sure you want to permanently delete ${p.first_name} ${p.last_name}? This cannot be undone.`)) return;
+            try {
+              await usersApi.deleteUser(p._id);
+              toast.success(`${p.first_name} ${p.last_name} has been deleted`);
+              onUpdate();
+            } catch (err: any) { toast.error(err.response?.data?.message ?? err.message); }
+          }}
+          className="pill px-2 py-1 text-[10px] font-bold bg-red-50 text-red-600 hover:bg-red-100 inline-flex items-center gap-1 transition"
+        >
+          <Trash2 className="w-3 h-3" /> Delete
+        </button>
       </td>
     </tr>
   );

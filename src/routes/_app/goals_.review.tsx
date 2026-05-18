@@ -4,7 +4,7 @@ import { sheetsApi, usersApi } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { PageHeader, NeuCard, StatusPill } from "@/components/app/ui";
 import { EmptyState } from "@/components/app/EmptyState";
-import { Inbox, Check, RotateCcw, Unlock, Pencil } from "lucide-react";
+import { Inbox, Check, RotateCcw, Unlock, Pencil, XCircle } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -227,21 +227,45 @@ function ReviewQueue() {
             {/* Edit request banner */}
             {s.is_edit_requested && (
               <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200">
-                <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Edit Request</div>
+                <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Edit Request Pending</div>
                 <p className="text-sm text-amber-900 mb-3">{s.edit_request_reason || "No reason provided"}</p>
-                <button
-                  onClick={async () => {
-                    try {
-                      await sheetsApi.approveEdit(s._id);
-                      toast.success("Edit request approved. Sheet unlocked.");
-                      qc.invalidateQueries({ queryKey: ["review"] });
-                    } catch (e: any) { toast.error(e.response?.data?.message ?? e.message); }
-                  }}
-                  className="pill px-4 py-2 text-sm font-semibold text-primary-foreground inline-flex items-center gap-2"
-                  style={{ background: "var(--gradient-peach)" }}
-                >
-                  <Unlock className="w-4 h-4" /> Approve Edit Request
-                </button>
+                <div className="flex flex-wrap gap-3 items-start">
+                  <button
+                    onClick={async () => {
+                      try {
+                        await sheetsApi.approveEdit(s._id);
+                        toast.success("Edit request approved. Sheet unlocked.");
+                        qc.invalidateQueries({ queryKey: ["review"] });
+                      } catch (e: any) { toast.error(e.response?.data?.message ?? e.message); }
+                    }}
+                    className="pill px-4 py-2 text-sm font-semibold text-primary-foreground inline-flex items-center gap-2"
+                    style={{ background: "var(--gradient-mint)" }}
+                  >
+                    <Unlock className="w-4 h-4" /> Approve Edit
+                  </button>
+                  <div className="flex flex-1 min-w-[260px] gap-2">
+                    <input
+                      placeholder="Rejection reason (≥10 chars)…"
+                      value={comments[`rej_${s._id}`] ?? ""}
+                      onChange={(e) => setComments({ ...comments, [`rej_${s._id}`]: e.target.value })}
+                      className="neu-inset flex-1 px-3 py-2 text-sm bg-transparent outline-none"
+                    />
+                    <button
+                      disabled={(comments[`rej_${s._id}`] ?? "").trim().length < 10}
+                      onClick={async () => {
+                        try {
+                          await sheetsApi.rejectEdit(s._id, comments[`rej_${s._id}`]);
+                          toast.success("Edit request rejected. Employee notified.");
+                          setComments({ ...comments, [`rej_${s._id}`]: "" });
+                          qc.invalidateQueries({ queryKey: ["review"] });
+                        } catch (e: any) { toast.error(e.response?.data?.message ?? e.message); }
+                      }}
+                      className="pill px-4 py-2 text-sm font-semibold bg-red-100 text-red-700 inline-flex items-center gap-2 disabled:opacity-50"
+                    >
+                      <XCircle className="w-4 h-4" /> Reject
+                    </button>
+                  </div>
+                </div>
               </div>
             )}
           </NeuCard>
