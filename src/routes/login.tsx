@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import { authApi } from "@/lib/api";
+import api, { authApi } from "@/lib/api";
 import { toast } from "sonner";
 import { Mail, KeyRound, User as UserIcon, ChevronDown, ArrowLeft, ShieldCheck } from "lucide-react";
 import { type AppRole } from "@/lib/auth-context";
@@ -215,7 +215,7 @@ function Login() {
 
             <button 
               type="button" 
-              onClick={() => { window.location.href = "http://localhost:5000/api/auth/entra/login"; }}
+              onClick={() => { window.location.href = `${api.defaults.baseURL}/auth/entra/login`; }}
               className="pill w-full px-5 py-3.5 text-sm font-bold text-foreground bg-secondary hover:bg-secondary/80 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" 
               style={{ boxShadow: "var(--shadow-soft-sm)" }}
             >

@@ -15,7 +15,8 @@ const generateToken = (id, email) => {
 router.get('/login', (req, res) => {
   const tenant = process.env.ENTRA_TENANT_ID;
   const clientId = process.env.ENTRA_CLIENT_ID;
-  const redirectUri = encodeURIComponent(`http://localhost:5000/api/auth/entra/callback`);
+  const baseUrl = process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000';
+  const redirectUri = encodeURIComponent(`${baseUrl}/api/auth/entra/callback`);
   // Requesting basic profile, email, offline access, and permissions to read manager and groups
   const scope = encodeURIComponent('openid profile email offline_access User.Read User.Read.All GroupMember.Read.All');
   
@@ -41,7 +42,8 @@ router.get('/callback', async (req, res) => {
     const tenant = process.env.ENTRA_TENANT_ID;
     const clientId = process.env.ENTRA_CLIENT_ID;
     const clientSecret = process.env.ENTRA_CLIENT_SECRET;
-    const redirectUri = `http://localhost:5000/api/auth/entra/callback`;
+    const baseUrl = process.env.RENDER_EXTERNAL_URL || 'http://localhost:5000';
+    const redirectUri = `${baseUrl}/api/auth/entra/callback`;
 
     // 1. Exchange auth code for access token
     const tokenResponse = await axios.post(
