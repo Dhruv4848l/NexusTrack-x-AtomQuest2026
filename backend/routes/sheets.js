@@ -443,4 +443,51 @@ router.post('/:id/approve-edit', protect, requireRole('admin', 'manager'), async
   }
 });
 
+// POST /api/sheets/:id/reject-edit — manager/admin rejects edit request (must provide reason)
+router.post('/:id/reject-edit', protect, requireRole('admin', 'manager'), async (req, res) => {
+  try {
+    const { reason } = req.body;
+    if (!reason || reason.trim().length < 10)
+      return res.status(400).json({ message: 'A valid reason (at least 10 characters) is required to reject an edit request' });
+
+    const sheet = await GoalSheet.findById(req.params.id);
+    if (!sheet) return res.status(404).json({ message: 'Sheet not found' });
+
+    sheet.is_edit_requested = false;
+    sheet.edit_request_reason = null;
+    await sheet.save();
+
+    await logAudit(req.user._id, 'edit_request_rejected', sheet._id, { reason });
+
+    // Trigger Email Notification to Employee
+    try {
+      const employee = await User.findById(sheet.owner_id);
+      const cycle = await Cycle.findById(sheet.cycle_id);
+      if (employee) {
+        const subject = `❌ Edit Request Rejected by ${req.user.first_name} ${req.user.last_name}`;
+        const html = `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 8px;">
+            <h2 style="color: #d32f2f; border-bottom: 2px solid #d32f2f; padding-bottom: 10px;">Edit Request Rejected</h2>
+            <p>Hello <strong>${employee.first_name} ${employee.last_name}</strong>,</p>
+            <p>Your request to edit your goal sheet for <strong>${cycle ? cycle.name : 'Active Cycle'}</strong> has been <strong>rejected</strong> by your manager <strong>${req.user.first_name} ${req.user.last_name}</strong>.</p>
+            <div style="background-color: #ffebee; border-left: 4px solid #d32f2f; padding: 15px; margin: 20px 0; border-radius: 4px;">
+              <strong>Reason for Rejection:</strong><br/>
+              <p style="margin-top: 5px; font-style: italic; color: #c62828;">"${reason.trim()}"</p>
+            </div>
+            <p>Your goal sheet remains locked. If you have further concerns, please reach out to your manager directly.</p>
+            <p style="font-size: 12px; color: #777; border-top: 1px solid #eaeaea; padding-top: 15px; margin-top: 30px;">This is a system generated notification. Please do not reply to this email.</p>
+          </div>
+        `;
+        await sendNotification(employee, subject, html);
+      }
+    } catch (err) {
+      console.error('[Email Notification Error]', err.message);
+    }
+
+    res.json({ ok: true, sheet });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 module.exports = router;

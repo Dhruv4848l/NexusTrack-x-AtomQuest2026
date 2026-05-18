@@ -51,6 +51,7 @@ export const usersApi = {
   update: (id: string, data: Partial<AQUser>) => api.patch<AQUser>(`/users/${id}`, data),
   setRoles: (id: string, roles: string[]) => api.patch<AQUser>(`/users/${id}/roles`, { roles }),
   myTeam: () => api.get<AQUser[]>("/users/team/my"),
+  deleteUser: (id: string) => api.delete(`/users/${id}`),
 };
 
 // ─── Cycles ──────────────────────────────────────────────
@@ -77,6 +78,7 @@ export const sheetsApi = {
   comments: (id: string) => api.get<AQComment[]>(`/sheets/${id}/comments`),
   requestEdit: (id: string, reason: string) => api.patch(`/sheets/${id}/request-edit`, { reason }),
   approveEdit: (id: string) => api.post(`/sheets/${id}/approve-edit`),
+  rejectEdit: (id: string, reason: string) => api.post(`/sheets/${id}/reject-edit`, { reason }),
 };
 
 // ─── Goals ───────────────────────────────────────────────
