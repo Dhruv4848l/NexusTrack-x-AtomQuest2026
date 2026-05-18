@@ -141,9 +141,9 @@ function Dashboard() {
 
         <NeuCard>
           <h3 className="font-display text-lg font-semibold mb-2">Composite</h3>
-          <div className="relative" style={{ height: "210px" }}>
+          <div className="relative" style={{ height: "280px" }}>
             <ResponsiveContainer width="100%" height="100%">
-              <RadialBarChart innerRadius="60%" outerRadius="90%" data={[{ name: "score", value: Math.round(avgScore) }]} startAngle={90} endAngle={-270}>
+              <RadialBarChart innerRadius="55%" outerRadius="95%" data={[{ name: "score", value: Math.round(avgScore) }]} startAngle={90} endAngle={-270}>
                 <PolarAngleAxis type="number" domain={[0, 100]} tick={false} />
                 <RadialBar background dataKey="value" cornerRadius={20} fill="oklch(0.62 0.17 275)" />
               </RadialBarChart>
