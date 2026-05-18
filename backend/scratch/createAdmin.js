@@ -12,7 +12,7 @@ const createAdmin = async () => {
     
     if (existing) {
       console.log('Admin user already exists. Updating to admin role...');
-      existing.roles = ['employee', 'manager', 'admin'];
+      existing.roles = ['admin'];
       await existing.save();
       console.log('User updated to admin.');
     } else {
@@ -20,7 +20,7 @@ const createAdmin = async () => {
         full_name: 'System Admin',
         email: adminEmail,
         password: 'AdminPassword123!',
-        roles: ['employee', 'manager', 'admin'],
+        roles: ['admin'],
         department: 'Management'
       });
       console.log('Admin user created successfully:', admin.email);
