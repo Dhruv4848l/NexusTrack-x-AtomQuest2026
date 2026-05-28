@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>NexusTrack Architecture Diagrams</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  body { font-family: 'Segoe UI', sans-serif; background: #fff; padding: 30px; max-width: 1200px; margin: 0 auto; }
+  h2 { color: #1a1a2e; border-bottom: 2px solid #ff6b00; padding-bottom: 8px; margin-top: 60px; }
+  .diagram-box { background: #fafafa; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; margin: 20px 0; overflow-x: auto; }
+  .mermaid { text-align: center; }
+</style>
+</head>
+<body>
+<h1 style="text-align:center;color:#1a1a2e;">NexusTrack — Architecture Diagrams</h1>
+
+<h2 id="d1">2.1 Class Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+classDiagram
+    class User {
+        +ObjectId _id
+        +String first_name
+        +String last_name
+        +String email
+        +String password
+        +String employee_id
+        +String department
+        +ObjectId manager_id
+        +String[] roles
+        +Boolean is_first_login
+        +String profile_image
+        +String personal_email
+        +matchPassword(pwd) Boolean
+    }
+    class Cycle {
+        +ObjectId _id
+        +String name
+        +Boolean is_active
+        +Date phase1_open/close
+        +Date q1-q4 open/close
+    }
+    class GoalSheet {
+        +ObjectId _id
+        +ObjectId owner_id
+        +ObjectId cycle_id
+        +String status
+        +Date submitted_at
+        +Date approved_at
+        +ObjectId approved_by
+    }
+    class Goal {
+        +ObjectId _id
+        +ObjectId sheet_id
+        +String thrust_area
+        +String title
+        +String uom_type
+        +Number target
+        +Number weightage
+    }
+    class Achievement {
+        +ObjectId _id
+        +ObjectId goal_id
+        +String quarter
+        +Number actual_value
+        +String status
+        +Number computed_score
+    }
+    class Comment {
+        +ObjectId _id
+        +String type
+        +ObjectId manager_id
+        +String comment
+    }
+    class AuditLog {
+        +ObjectId _id
+        +ObjectId actor_id
+        +String entity
+        +String action
+    }
+    class Escalation {
+        +ObjectId _id
+        +ObjectId sheet_id
+        +String reason
+        +String status
+    }
+    User "1" --> "0..*" GoalSheet : owns
+    User "1" --> "0..*" User : manages
+    Cycle "1" --> "0..*" GoalSheet : contains
+    GoalSheet "1" --> "1..8" Goal : has
+    Goal "1" --> "0..4" Achievement : tracks
+    User "1" --> "0..*" Comment : writes
+    User "1" --> "0..*" AuditLog : performs
+    GoalSheet "1" --> "0..*" Escalation : escalated
+</pre></div>
+
+<h2 id="d2">2.2 Component Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph Frontend["Frontend - React SPA"]
+        LP[Login Page]
+        DB[Dashboard]
+        GE[Goal Editor]
+        CI[Check-ins]
+        PR[Profile]
+        RP[Reports]
+        AQ[Approval Queue]
+        AP[Admin Panel]
+    end
+    subgraph API["API Client Layer"]
+        AX[Axios Instance]
+        AC[Auth Context]
+    end
+    subgraph Backend["Backend - Express API"]
+        AR[Auth Routes]
+        UR[User Routes]
+        SR[Sheet Routes]
+        GR[Goal Routes]
+        ACR[Achievement Routes]
+        CR[Cycle Routes]
+    end
+    subgraph MW["Middleware"]
+        JWT[JWT Auth]
+        RBAC[Role Guard]
+        RL[Rate Limiter]
+    end
+    subgraph BL["Business Logic"]
+        SE[Score Engine]
+        NS[Notification Service]
+    end
+    subgraph Data["Data Layer"]
+        MG[(MongoDB Atlas)]
+        CL[(Cloudinary)]
+        GM[Gmail SMTP]
+    end
+    LP --> AX
+    DB --> AX
+    AX --> AR
+    AX --> SR
+    AR --> JWT
+    JWT --> RBAC
+    ACR --> SE
+    SR --> NS
+    NS --> GM
+    AR --> MG
+    SR --> MG
+</pre></div>
+
+<h2 id="d3">2.3 Deployment Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph Client["Client Tier"]
+        BR["🌐 Web Browser"]
+    end
+    subgraph Vercel["Vercel CDN"]
+        VR["⚛️ React SPA - Vite Build"]
+    end
+    subgraph Render["Render.com"]
+        ND["🟢 Node.js Express Server"]
+    end
+    subgraph Cloud["Cloud Services"]
+        MA[("🍃 MongoDB Atlas")]
+        CLD["🖼️ Cloudinary CDN"]
+        MSFT["🔐 Microsoft Entra ID"]
+        GMAIL["📧 Gmail SMTP"]
+    end
+    BR -->|HTTPS| VR
+    VR -->|REST API| ND
+    ND -->|Mongoose| MA
+    ND -->|Image Upload| CLD
+    ND -->|OAuth 2.0| MSFT
+    ND -->|Nodemailer| GMAIL
+</pre></div>
+
+<h2 id="d4">2.4 Object Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    U1["neha : User\nemail = neha.gupta@atomberg.com\nroles = employee\ndept = Engineering"]
+    U2["vikram : User\nemail = vikram.desai@atomberg.com\nroles = manager"]
+    C1["fy2026 : Cycle\nname = FY 2026-27\nis_active = true"]
+    S1["sheet1 : GoalSheet\nstatus = approved_locked"]
+    G1["goal1 : Goal\ntitle = API Integration\nuom = timeline\nweight = 35%"]
+    A1["ach1 : Achievement\nquarter = Q1\nscore = 100%"]
+    U2 -->|manages| U1
+    U1 -->|owns| S1
+    C1 -->|contains| S1
+    S1 -->|has| G1
+    G1 -->|tracks| A1
+    U2 -->|approved| S1
+</pre></div>
+
+<h2 id="d5">2.5 Package Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph FE["Frontend src/"]
+        subgraph Routes["routes/"]
+            R1[login.tsx]
+            R2[first-login.tsx]
+            R3[dashboard.tsx]
+            R4[goals.tsx]
+            R5[checkins.tsx]
+            R6[profile.tsx]
+            R7[reports.tsx]
+            R8[admin/users.tsx]
+        end
+        subgraph Lib["lib/"]
+            L1[api.ts]
+            L2[auth-context.tsx]
+            L3[scoring.ts]
+        end
+        subgraph Comp["components/"]
+            C1[AppShell.tsx]
+            C2[EmptyState.tsx]
+        end
+    end
+    subgraph BE["Backend backend/"]
+        subgraph Models["models/"]
+            M1[User.js]
+            M2[GoalSheet.js]
+            M3[Goal.js]
+            M4[Achievement.js]
+            M5[Comment.js]
+            M6[AuditLog.js]
+        end
+        subgraph BRoutes["routes/"]
+            B1[auth.js]
+            B2[sheets.js]
+            B3[achievements.js]
+            B4[users.js]
+        end
+        subgraph Utils["utils/"]
+            U1[scoreEngine.js]
+            U2[notificationService.js]
+        end
+    end
+    L1 --> B1
+    L1 --> B2
+    B2 --> M2
+    B3 --> U1
+</pre></div>
+
+<h2 id="d6">2.6 Composite Structure Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph System["NexusTrack System"]
+        subgraph Auth["Auth Subsystem"]
+            LOGIN[Login Handler]
+            SSO[Microsoft SSO]
+            JWTM[JWT Manager]
+            PWD[Password Manager]
+        end
+        subgraph Goal["Goal Management"]
+            SHEET[Sheet Controller]
+            GOALC[Goal Controller]
+            APPROVE[Approval Engine]
+            RETURN[Return Handler]
+        end
+        subgraph Perf["Performance Tracking"]
+            CHECKIN[Check-in Controller]
+            SCORE[Score Engine]
+            SYNC[Shared Goal Sync]
+        end
+        subgraph Notif["Notifications"]
+            EMAIL[Email Dispatcher]
+            TEMPLATE[HTML Templates]
+        end
+        subgraph Admin["Admin Subsystem"]
+            USERMGMT[User Management]
+            ROLEMGMT[Role Management]
+            AUDIT[Audit Logger]
+        end
+    end
+    LOGIN --> JWTM
+    SSO --> JWTM
+    SHEET --> APPROVE
+    APPROVE --> EMAIL
+    CHECKIN --> SCORE
+    USERMGMT --> AUDIT
+</pre></div>
+
+<h2 id="d7">2.7 Use Case Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph LR
+    EMP((Employee))
+    MGR((Manager))
+    ADM((Admin/DBA))
+    SYS((System))
+    EMP --> UC1[Login / Change Password]
+    EMP --> UC2[Create Goal Sheet]
+    EMP --> UC3[Save Draft]
+    EMP --> UC4[Submit for Approval]
+    EMP --> UC5[Log Quarterly Check-ins]
+    EMP --> UC6[Upload Profile Image]
+    EMP --> UC7[Request Edit Access]
+    MGR --> UC9[Review Goal Sheets]
+    MGR --> UC10[Approve and Lock]
+    MGR --> UC11[Approve with Edits]
+    MGR --> UC12[Return with Comments]
+    MGR --> UC13[View Team Check-ins]
+    MGR --> UC14[Export CSV Reports]
+    MGR --> UC15[Push Shared Goals]
+    ADM --> UC17[Manage Users]
+    ADM --> UC18[Assign Roles]
+    ADM --> UC19[Manage Cycles]
+    ADM --> UC20[Unlock Sheets]
+    ADM --> UC21[View Audit Logs]
+    SYS --> UC24[Send Notifications]
+    SYS --> UC25[Compute Scores]
+    SYS --> UC26[Enforce Time Windows]
+</pre></div>
+
+<h2 id="d8">2.8 Activity Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+flowchart TD
+    A([Start]) --> B[DBA Creates Employee]
+    B --> C[Assign Manager]
+    C --> D[Employee Logs In]
+    D --> E{First Login?}
+    E -->|Yes| F[Change Password]
+    F --> G[Dashboard]
+    E -->|No| G
+    G --> H[Create Goal Sheet]
+    H --> I[Add Goals 1-8]
+    I --> J{Action?}
+    J -->|Save| K[Save Draft]
+    K --> I
+    J -->|Submit| L[Submit for Approval]
+    L --> M[Manager Reviews]
+    M --> N{Decision?}
+    N -->|Approve| O[Lock Sheet]
+    N -->|Edit+Approve| P[Modify Targets]
+    P --> O
+    N -->|Return| Q[Return with Feedback]
+    Q --> H
+    O --> R[Log Quarterly Check-ins]
+    R --> S[Compute Score]
+    S --> T{More Quarters?}
+    T -->|Yes| R
+    T -->|No| U[Export Reports]
+    U --> V([End])
+</pre></div>
+
+<h2 id="d9">2.9 State Machine Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+stateDiagram-v2
+    [*] --> Draft : Create Sheet
+    Draft --> Draft : Save Draft
+    Draft --> Submitted : Submit
+    Submitted --> ApprovedLocked : Approve
+    Submitted --> ApprovedLocked : Approve with Edits
+    Submitted --> Returned : Return
+    Returned --> Draft : Edit
+    Returned --> Submitted : Resubmit
+    ApprovedLocked --> ApprovedLocked : Log Check-ins
+    ApprovedLocked --> Returned : Approve Edit Request
+    ApprovedLocked --> Draft : Admin Unlock
+    ApprovedLocked --> Completed : Cycle Ends
+    Completed --> [*]
+</pre></div>
+
+<h2 id="d10">2.10 Sequence Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+sequenceDiagram
+    actor E as Employee
+    actor M as Manager
+    participant FE as React Frontend
+    participant API as Express API
+    participant DB as MongoDB
+    participant EM as Gmail SMTP
+    E->>FE: Enter credentials
+    FE->>API: POST /api/auth/login
+    API->>DB: Find user
+    DB-->>API: User doc
+    API-->>FE: JWT + user data
+    E->>FE: Create goals and submit
+    FE->>API: POST /api/sheets/save
+    API->>DB: Save sheet + goals
+    API->>DB: Log audit
+    API->>EM: Notify manager
+    API-->>FE: sheetId
+    M->>FE: Open approval queue
+    FE->>API: GET /api/sheets
+    API-->>FE: Sheets list
+    M->>FE: Approve
+    FE->>API: POST /sheets/:id/approve
+    API->>DB: Lock sheet
+    API->>EM: Notify employee
+    API-->>FE: ok
+</pre></div>
+
+<h2 id="d11">2.11 Communication Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    E["Employee Browser"] -->|"1: POST /auth/login"| API["Express API"]
+    API -->|"2: findOne"| DB[("MongoDB")]
+    DB -->|"3: user doc"| API
+    API -->|"4: JWT token"| E
+    E -->|"5: POST /sheets/save"| API
+    API -->|"6: verify JWT"| MW["Auth Middleware"]
+    MW -->|"7: req.user"| API
+    API -->|"8: create sheet"| DB
+    API -->|"9: sendEmail"| GM["Gmail SMTP"]
+    M["Manager Browser"] -->|"10: GET /sheets"| API
+    M -->|"11: POST approve"| API
+    API -->|"12: update status"| DB
+    E -->|"13: POST /achievements/upsert"| API
+    API -->|"14: computeScore"| SE["Score Engine"]
+    API -->|"15: upsert"| DB
+    E -->|"16: POST /auth/avatar"| API
+    API -->|"17: upload"| CL["Cloudinary"]
+</pre></div>
+
+<h2 id="d12">2.12 Timing Diagram</h2>
+<div class="diagram-box"><pre class="mermaid">
+gantt
+    title NexusTrack Goal Lifecycle - FY 2026-27
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+    section Phase 1
+    Goal Creation Window     :active, p1, 2026-04-01, 2026-05-31
+    Employee Creates Goals   :eg, 2026-04-05, 2026-04-20
+    Manager Reviews          :mr, 2026-04-21, 2026-05-05
+    section Q1
+    Q1 Check-in Window       :q1, 2026-06-15, 2026-07-15
+    section Q2
+    Q2 Check-in Window       :q2, 2026-09-15, 2026-10-15
+    section Q3
+    Q3 Check-in Window       :q3, 2026-12-15, 2027-01-15
+    section Q4
+    Q4 Check-in Window       :q4, 2027-03-15, 2027-04-15
+    Final Reports            :fr, 2027-04-10, 2027-04-30
+</pre></div>
+
+<h2 id="d13">2.13 Application Logic Flowchart</h2>
+<div class="diagram-box"><pre class="mermaid">
+flowchart TD
+    START(["HTTP Request"]) --> CORS{"CORS Check"}
+    CORS -->|Blocked| ERR1["403 Error"]
+    CORS -->|OK| RL{"Rate Limit?"}
+    RL -->|Exceeded| ERR2["429 Error"]
+    RL -->|OK| ROUTE{"Route Match?"}
+    ROUTE -->|No| ERR3["404 Error"]
+    ROUTE -->|Login| LOGIN["Login Handler"]
+    ROUTE -->|Protected| AUTH["JWT Middleware"]
+    LOGIN --> FIND["Find User"]
+    FIND --> MATCH{"Password OK?"}
+    MATCH -->|No| ERR4["401 Error"]
+    MATCH -->|Yes| TOKEN["Sign JWT"]
+    TOKEN --> RES1["200 Response"]
+    AUTH --> VERIFY{"Token Valid?"}
+    VERIFY -->|No| ERR5["401 Error"]
+    VERIFY -->|Yes| RBAC{"Role Check"}
+    RBAC -->|Denied| ERR6["403 Error"]
+    RBAC -->|OK| HANDLER["Route Handler"]
+    HANDLER --> BIZ["Business Logic"]
+    BIZ --> DBOP["DB Operation"]
+    DBOP --> AUDIT["Log Audit"]
+    AUDIT --> RESP["200 Response"]
+</pre></div>
+
+<h2 id="d14">2.14 C4 Model — System Context</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    EMP["👤 Employee"]
+    MGR["👤 Manager"]
+    ADM["👤 Admin / DBA"]
+    NT["🏢 NexusTrack GoalPortal\nReact + Express + MongoDB"]
+    MSFT["☁️ Microsoft Entra ID"]
+    GMAIL["📧 Gmail SMTP"]
+    CLOUD["🖼️ Cloudinary CDN"]
+    EMP --> NT
+    MGR --> NT
+    ADM --> NT
+    NT --> MSFT
+    NT --> GMAIL
+    NT --> CLOUD
+</pre></div>
+
+<h2 id="d14b">2.14 C4 Model — Container</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph NexusTrack
+        SPA["⚛️ React SPA\nVite + TanStack\nVercel"]
+        API["🟢 Express API\nNode.js\nRender.com"]
+        DB[("🍃 MongoDB Atlas")]
+    end
+    SPA -->|"REST + JWT"| API
+    API -->|"Mongoose"| DB
+    API --> MSFT["Entra ID"]
+    API --> GMAIL["Gmail"]
+    API --> CLOUD["Cloudinary"]
+    U["👤 Users"] -->|"HTTPS"| SPA
+</pre></div>
+
+<h2 id="d15">2.15 Architecture Pattern</h2>
+<div class="diagram-box"><pre class="mermaid">
+graph TB
+    subgraph Presentation["Presentation Tier"]
+        VIEW["View: React Components"]
+        STATE["State: AuthContext + Hooks"]
+        APICL["API Client: Axios"]
+    end
+    subgraph Application["Application Tier"]
+        MWL["Middleware Pipeline\nCORS → Rate Limit → JWT → RBAC"]
+        CTRL["Controllers: Express Routes"]
+        SVC["Services: ScoreEngine + Notifications"]
+    end
+    subgraph DataTier["Data Tier"]
+        ODM["ODM: Mongoose Schemas"]
+        DBMS[("MongoDB Atlas")]
+    end
+    VIEW --> STATE --> APICL
+    APICL -->|"REST + JWT"| MWL
+    MWL --> CTRL
+    CTRL --> SVC
+    CTRL --> ODM --> DBMS
+</pre></div>
+
+<script>mermaid.initialize({startOnLoad:true, theme:'default', securityLevel:'loose'});</script>
+</body>
+</html>

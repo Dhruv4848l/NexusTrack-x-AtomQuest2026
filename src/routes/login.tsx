@@ -67,7 +67,9 @@ function Login() {
     setBusy(true);
     try {
       const { data } = await authApi.login(email, password, selectedRole);
-      localStorage.setItem("activeRole", selectedRole);
+      // Use server-determined activeRole (falls back to user's primary role if selectedRole doesn't match)
+      const effectiveRole = data.activeRole || selectedRole;
+      localStorage.setItem("activeRole", effectiveRole);
       setAuth(data.token, data.user);
       toast.success("Welcome back!");
       nav({ to: "/dashboard" });

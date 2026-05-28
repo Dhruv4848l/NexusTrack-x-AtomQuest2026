@@ -56,14 +56,20 @@ router.post('/login', async (req, res) => {
     if (!user || !(await user.matchPassword(password)))
       return res.status(401).json({ message: 'Invalid email or password' });
 
-    // Role Isolation Enforcement
-    if (requestedRole && !user.roles.includes(requestedRole)) {
-      return res.status(403).json({ message: `Your account does not have the '${requestedRole}' role.` });
+    // Role Isolation: if requestedRole is specified and the user has it, use it.
+    // Otherwise, fall back to the user's primary role (first in their roles array).
+    let activeRole = null;
+    if (requestedRole && user.roles.includes(requestedRole)) {
+      activeRole = requestedRole;
+    } else {
+      // Auto-select: prefer admin > database_admin > manager > employee
+      const priority = ['admin', 'database_admin', 'manager', 'employee'];
+      activeRole = priority.find(r => user.roles.includes(r)) || user.roles[0];
     }
 
     const token = signToken(user._id);
     const userData = user.toJSON();
-    res.json({ token, user: userData, is_first_login: user.is_first_login });
+    res.json({ token, user: userData, is_first_login: user.is_first_login, activeRole });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

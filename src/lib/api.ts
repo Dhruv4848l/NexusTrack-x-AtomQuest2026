@@ -31,7 +31,7 @@ export default api;
 // ─── Auth ────────────────────────────────────────────────
 export const authApi = {
   login: (email: string, password: string, requestedRole?: string) =>
-    api.post<{ token: string; user: AQUser; is_first_login: boolean }>("/auth/login", { email, password, requestedRole }),
+    api.post<{ token: string; user: AQUser; is_first_login: boolean; activeRole?: string }>("/auth/login", { email, password, requestedRole }),
   register: (first_name: string, last_name: string, email: string, password: string, department?: string, employee_id?: string, roles?: string[]) =>
     api.post<{ token: string; user: AQUser }>("/auth/register", { first_name, last_name, email, password, department, employee_id, roles }),
   me: () => api.get<{ user: AQUser }>("/auth/me"),

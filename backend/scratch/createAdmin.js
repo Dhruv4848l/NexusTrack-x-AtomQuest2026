@@ -17,11 +17,13 @@ const createAdmin = async () => {
       console.log('User updated to admin.');
     } else {
       const admin = await User.create({
-        full_name: 'System Admin',
+        first_name: 'System',
+        last_name: 'Admin',
         email: adminEmail,
         password: 'AdminPassword123!',
         roles: ['admin'],
-        department: 'Management'
+        department: 'Management',
+        is_first_login: false
       });
       console.log('Admin user created successfully:', admin.email);
     }
