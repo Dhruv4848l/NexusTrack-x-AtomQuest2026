@@ -113,9 +113,9 @@ function Login() {
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-card border-r border-border/50 items-center justify-center p-12">
         {/* Interactive network constellation + depth layers */}
         <NetworkField />
-        <div className="grid-floor absolute inset-x-0 bottom-0 h-2/5 pointer-events-none" aria-hidden />
-        <div className="absolute -top-16 -left-16 h-96 w-96 rounded-full opacity-30 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #7a6cf0, transparent 65%)" }} aria-hidden />
-        <div className="absolute -bottom-10 -right-10 h-80 w-80 rounded-full opacity-25 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #2bb8a3, transparent 65%)" }} aria-hidden />
+        <div className="bg-dots absolute inset-0 opacity-60 pointer-events-none" aria-hidden />
+        <div className="absolute -top-16 -left-16 h-96 w-96 rounded-full opacity-40 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #a78b71, transparent 65%)" }} aria-hidden />
+        <div className="absolute -bottom-10 -right-10 h-80 w-80 rounded-full opacity-30 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #8a6f56, transparent 65%)" }} aria-hidden />
 
         <motion.div 
           initial={{ opacity: 0, x: -30 }} 

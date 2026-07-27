@@ -69,7 +69,7 @@ export function NetworkField({ className = "" }: { className?: string }) {
           const d = Math.hypot(a.x - b.x, a.y - b.y);
           if (d < LINK) {
             const o = (1 - d / LINK) * 0.5;
-            ctx.strokeStyle = `rgba(145, 132, 217, ${o})`;
+            ctx.strokeStyle = `rgba(167, 139, 113, ${o})`;
             ctx.lineWidth = 0.7;
             ctx.beginPath();
             ctx.moveTo(a.x, a.y);
@@ -83,7 +83,7 @@ export function NetworkField({ className = "" }: { className?: string }) {
         const near = Math.hypot(mouse.x - n.x, mouse.y - n.y) < 170;
         ctx.beginPath();
         ctx.arc(n.x, n.y, n.r + (near ? 0.8 : 0), 0, Math.PI * 2);
-        ctx.fillStyle = near ? "rgba(181, 171, 252, 0.95)" : "rgba(181, 171, 252, 0.6)";
+        ctx.fillStyle = near ? "rgba(232, 213, 183, 0.95)" : "rgba(201, 184, 160, 0.6)";
         ctx.fill();
       }
 
