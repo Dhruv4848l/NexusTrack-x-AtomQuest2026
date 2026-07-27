@@ -51,7 +51,7 @@ function FirstLogin() {
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-md neu-card p-8">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600">
+          <div className="w-12 h-12 rounded-2xl bg-amber-400/15 flex items-center justify-center text-amber-300">
             <Lock className="w-6 h-6" />
           </div>
           <div>

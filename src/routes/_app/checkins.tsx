@@ -85,7 +85,7 @@ function MyCheckins() {
       {/* Window status banner */}
       {cycle && !isWindowOpen && !locked && (
         <NeuCard>
-          <div className="flex items-center gap-2 text-sm text-amber-700">
+          <div className="flex items-center gap-2 text-sm text-amber-300">
             <Lock className="w-4 h-4" />
             <span>
               <strong>{activeQ} check-in window is closed.</strong>{' '}

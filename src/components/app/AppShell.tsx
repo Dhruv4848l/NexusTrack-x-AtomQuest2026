@@ -314,7 +314,7 @@ function ForcePasswordChangeModal({ user, onComplete }: { user: any, onComplete:
     <div className="fixed inset-0 z-[999] flex items-center justify-center bg-background/95 backdrop-blur-md p-4">
       <motion.div initial={{ opacity: 0, y: 20, scale: 0.95 }} animate={{ opacity: 1, y: 0, scale: 1 }} className="w-full max-w-md neu-card p-8 shadow-2xl">
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 rounded-2xl bg-amber-100 flex items-center justify-center text-amber-600 shadow-inner">
+          <div className="w-12 h-12 rounded-2xl bg-amber-400/15 flex items-center justify-center text-amber-300">
             <Lock className="w-6 h-6" />
           </div>
           <div>

@@ -123,7 +123,7 @@ function GoalsPage() {
 
       {(sheetQ.data?.returns?.length ?? 0) > 0 && sheetQ.data?.sheet?.status === "returned" && (
         <NeuCard>
-          <div className="flex items-center gap-2 text-sm font-semibold text-amber-700"><MessageSquare className="w-4 h-4" /> Returned for rework</div>
+          <div className="flex items-center gap-2 text-sm font-semibold text-amber-300"><MessageSquare className="w-4 h-4" /> Returned for rework</div>
           <p className="text-sm text-muted-foreground mt-2">{(sheetQ.data.returns[0] as any).comment}</p>
         </NeuCard>
       )}
@@ -132,7 +132,7 @@ function GoalsPage() {
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <div className="text-sm">
             Goals: <span className="font-display font-bold">{rows.length}</span> / 8 · Total weightage:
-            <span className={`font-display font-bold ml-1 ${Math.abs(total - 100) < 0.01 ? "text-emerald-600" : "text-amber-600"}`}>{total}%</span>
+            <span className={`font-display font-bold ml-1 ${Math.abs(total - 100) < 0.01 ? "text-emerald-400" : "text-amber-300"}`}>{total}%</span>
           </div>
           {!locked && !submitted && (
             <button onClick={() => rows.length < 8 && setRows([...rows, emptyGoal()])} disabled={rows.length >= 8}
@@ -150,7 +150,7 @@ function GoalsPage() {
             <div key={i} className="neu-card-sm p-4 grid grid-cols-1 md:grid-cols-12 gap-3">
               {isShared && (
                 <div className="md:col-span-12">
-                  <span className="inline-flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-full bg-blue-100 text-blue-700 font-bold uppercase tracking-wider">
+                  <span className="inline-flex items-center gap-1.5 text-[10px] px-2.5 py-1 rounded-full bg-blue-500/15 text-blue-300 font-bold uppercase tracking-wider">
                     🔗 Shared KPI — only weightage is editable
                   </span>
                 </div>

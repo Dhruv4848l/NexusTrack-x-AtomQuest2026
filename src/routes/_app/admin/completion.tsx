@@ -98,13 +98,13 @@ function CompletionDashboard() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         <NeuCard>
-          <Stat icon={<CheckCircle2 className="w-5 h-5 text-emerald-500" />} label="Goals Submitted" value={`${data?.sheetsCompleted ?? 0} / ${data?.totalEmployees ?? 0}`} hint="Approved or locked sheets" />
+          <Stat icon={<CheckCircle2 className="w-5 h-5 text-emerald-400" />} label="Goals Submitted" value={`${data?.sheetsCompleted ?? 0} / ${data?.totalEmployees ?? 0}`} hint="Approved or locked sheets" />
         </NeuCard>
         <NeuCard>
-          <Stat icon={<BarChart3 className="w-5 h-5 text-blue-500" />} label="Q1 Complete" value={`${data?.q1Done ?? 0} / ${data?.totalEmployees ?? 0}`} hint="All Q1 actuals entered" />
+          <Stat icon={<BarChart3 className="w-5 h-5 text-blue-400" />} label="Q1 Complete" value={`${data?.q1Done ?? 0} / ${data?.totalEmployees ?? 0}`} hint="All Q1 actuals entered" />
         </NeuCard>
         <NeuCard>
-          <Stat icon={<Clock className="w-5 h-5 text-amber-500" />} label="Active Cycle" value={data?.cycle?.name ?? "—"} hint={data?.cycle?.is_active ? "Currently active" : "No active cycle"} />
+          <Stat icon={<Clock className="w-5 h-5 text-amber-400" />} label="Active Cycle" value={data?.cycle?.name ?? "—"} hint={data?.cycle?.is_active ? "Currently active" : "No active cycle"} />
         </NeuCard>
       </div>
 
@@ -164,12 +164,12 @@ function CompletionDashboard() {
 
 function SheetBadge({ status }: { status: string }) {
   const map: Record<string, { bg: string; text: string; label: string }> = {
-    approved_locked: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Approved" },
-    completed: { bg: "bg-emerald-100", text: "text-emerald-700", label: "Completed" },
-    submitted: { bg: "bg-blue-100", text: "text-blue-700", label: "Submitted" },
-    draft: { bg: "bg-gray-100", text: "text-gray-600", label: "Draft" },
-    returned: { bg: "bg-amber-100", text: "text-amber-700", label: "Returned" },
-    no_sheet: { bg: "bg-red-50", text: "text-red-500", label: "Not started" },
+    approved_locked: { bg: "bg-emerald-500/15", text: "text-emerald-300", label: "Approved" },
+    completed: { bg: "bg-emerald-500/15", text: "text-emerald-300", label: "Completed" },
+    submitted: { bg: "bg-blue-500/15", text: "text-blue-300", label: "Submitted" },
+    draft: { bg: "bg-white/8", text: "text-muted-foreground", label: "Draft" },
+    returned: { bg: "bg-amber-500/15", text: "text-amber-300", label: "Returned" },
+    no_sheet: { bg: "bg-red-500/15", text: "text-red-300", label: "Not started" },
   };
   const s = map[status] ?? map.no_sheet;
   return <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${s.bg} ${s.text}`}>{s.label}</span>;
@@ -177,8 +177,8 @@ function SheetBadge({ status }: { status: string }) {
 
 function QuarterCell({ status }: { status: string }) {
   if (status === "done")
-    return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-100"><CheckCircle2 className="w-4 h-4 text-emerald-600" /></span>;
+    return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-emerald-500/15"><CheckCircle2 className="w-4 h-4 text-emerald-300" /></span>;
   if (status === "partial")
-    return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-amber-100"><Clock className="w-4 h-4 text-amber-600" /></span>;
-  return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gray-100"><XCircle className="w-4 h-4 text-gray-400" /></span>;
+    return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-amber-500/15"><Clock className="w-4 h-4 text-amber-300" /></span>;
+  return <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-white/8"><XCircle className="w-4 h-4 text-muted-foreground" /></span>;
 }

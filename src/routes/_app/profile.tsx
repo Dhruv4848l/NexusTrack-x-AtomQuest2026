@@ -98,7 +98,7 @@ function ProfilePage() {
                   {user.profile_image ? (
                     <img src={user.profile_image} alt="Profile" className="w-full h-full object-cover" />
                   ) : (
-                    user.first_name[0]
+                    (user.first_name?.[0] ?? user.email?.[0] ?? "?").toUpperCase()
                   )}
                 </div>
                 <button 
@@ -151,7 +151,7 @@ function ProfilePage() {
         <div className="space-y-6">
           <NeuCard>
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-2 rounded-xl bg-amber-100 text-amber-600">
+              <div className="p-2 rounded-xl bg-amber-400/15 text-amber-300">
                 <Lock className="w-5 h-5" />
               </div>
               <h3 className="font-display font-bold text-lg">Change Password</h3>

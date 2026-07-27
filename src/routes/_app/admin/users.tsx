@@ -245,7 +245,7 @@ function UserRow({ user: p, allUsers, onUpdate }: { user: any; allUsers: any[]; 
               onUpdate();
             } catch (err: any) { toast.error(err.response?.data?.message ?? err.message); }
           }}
-          className="pill px-2 py-1 text-[10px] font-bold bg-red-50 text-red-600 hover:bg-red-100 inline-flex items-center gap-1 transition"
+          className="pill px-2 py-1 text-[10px] font-bold bg-red-500/15 text-red-300 hover:bg-red-500/25 inline-flex items-center gap-1 transition"
         >
           <Trash2 className="w-3 h-3" /> Delete
         </button>

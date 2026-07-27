@@ -87,7 +87,7 @@ function ReviewQueue() {
                 <div className="font-display text-lg font-semibold">{(s.owner as any)?.full_name}</div>
                 <div className="text-xs text-muted-foreground">
                   {(s.owner as any)?.department} · {goals.length} goals · total{" "}
-                  <span className={Math.abs(total - 100) > 0.01 ? "text-red-500 font-bold" : ""}>{total}%</span>
+                  <span className={Math.abs(total - 100) > 0.01 ? "text-red-400 font-bold" : ""}>{total}%</span>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -98,7 +98,7 @@ function ReviewQueue() {
                     className={`pill px-3 py-1.5 text-xs font-semibold inline-flex items-center gap-1.5 transition ${
                       isEditing ? "text-primary-foreground" : "bg-secondary"
                     }`}
-                    style={isEditing ? { background: "var(--gradient-peach)" } : undefined}
+                    style={isEditing ? { background: "var(--gradient-amber)" } : undefined}
                   >
                     <Pencil className="w-3.5 h-3.5" /> {isEditing ? "Editing" : "Edit inline"}
                   </button>
@@ -115,7 +115,7 @@ function ReviewQueue() {
                       <div className="font-semibold flex items-center gap-2">
                         {g.title}
                         {g.shared_parent_id && (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-100 text-blue-700 font-bold">🔗 Shared</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-blue-500/15 text-blue-300 font-bold">🔗 Shared</span>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground">
@@ -226,9 +226,9 @@ function ReviewQueue() {
 
             {/* Edit request banner */}
             {s.is_edit_requested && (
-              <div className="mt-4 p-4 rounded-2xl bg-amber-50 border border-amber-200">
-                <div className="text-xs font-bold text-amber-800 uppercase tracking-wider mb-1">Edit Request Pending</div>
-                <p className="text-sm text-amber-900 mb-3">{s.edit_request_reason || "No reason provided"}</p>
+              <div className="mt-4 p-4 rounded-2xl bg-amber-400/10 border border-amber-400/25">
+                <div className="text-xs font-bold text-amber-300 uppercase tracking-wider mb-1">Edit Request Pending</div>
+                <p className="text-sm text-amber-100/90 mb-3">{s.edit_request_reason || "No reason provided"}</p>
                 <div className="flex flex-wrap gap-3 items-start">
                   <button
                     onClick={async () => {
@@ -260,7 +260,7 @@ function ReviewQueue() {
                           qc.invalidateQueries({ queryKey: ["review"] });
                         } catch (e: any) { toast.error(e.response?.data?.message ?? e.message); }
                       }}
-                      className="pill px-4 py-2 text-sm font-semibold bg-red-100 text-red-700 inline-flex items-center gap-2 disabled:opacity-50"
+                      className="pill px-4 py-2 text-sm font-semibold bg-red-500/15 text-red-300 hover:bg-red-500/25 inline-flex items-center gap-2 disabled:opacity-50 transition"
                     >
                       <XCircle className="w-4 h-4" /> Reject
                     </button>

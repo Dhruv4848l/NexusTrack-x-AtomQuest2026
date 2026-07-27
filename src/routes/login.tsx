@@ -1,12 +1,13 @@
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/lib/auth-context";
-import api, { authApi } from "@/lib/api";
+import { authApi } from "@/lib/api";
 import { toast } from "sonner";
 import { Mail, KeyRound, User as UserIcon, ChevronDown, ArrowLeft, ShieldCheck } from "lucide-react";
 import { type AppRole } from "@/lib/auth-context";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRef } from "react";
+import { NetworkField } from "@/components/app/NetworkField";
 
 export const Route = createFileRoute("/login")({
   head: () => ({ meta: [{ title: "Sign in · AtomQuest GoalPortal" }] }),
@@ -110,10 +111,12 @@ function Login() {
     <div className="min-h-screen bg-background flex w-full">
       {/* ─── Left Pane: Branding & Info ─── */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden bg-card border-r border-border/50 items-center justify-center p-12">
-        {/* Decorative Gradients */}
-        <div className="absolute top-0 left-0 w-full h-full opacity-[0.15] pointer-events-none" style={{ background: "radial-gradient(circle at top left, var(--primary) 0%, transparent 50%)" }} />
-        <div className="absolute bottom-0 right-0 w-full h-full opacity-[0.15] pointer-events-none" style={{ background: "radial-gradient(circle at bottom right, var(--mint) 0%, transparent 50%)" }} />
-        
+        {/* Interactive network constellation + depth layers */}
+        <NetworkField />
+        <div className="grid-floor absolute inset-x-0 bottom-0 h-2/5 pointer-events-none" aria-hidden />
+        <div className="absolute -top-16 -left-16 h-96 w-96 rounded-full opacity-30 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #7a6cf0, transparent 65%)" }} aria-hidden />
+        <div className="absolute -bottom-10 -right-10 h-80 w-80 rounded-full opacity-25 blur-[90px] pointer-events-none animate-drift" style={{ background: "radial-gradient(circle, #2bb8a3, transparent 65%)" }} aria-hidden />
+
         <motion.div 
           initial={{ opacity: 0, x: -30 }} 
           animate={{ opacity: 1, x: 0 }} 
@@ -209,26 +212,6 @@ function Login() {
               {busy ? "Signing in…" : "Sign in to GoalPortal"}
             </button>
 
-            <div className="relative flex items-center py-2">
-              <div className="flex-grow border-t border-border/50"></div>
-              <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-semibold uppercase tracking-wider">Or</span>
-              <div className="flex-grow border-t border-border/50"></div>
-            </div>
-
-            <button 
-              type="button" 
-              onClick={() => { window.location.href = `${api.defaults.baseURL}/auth/entra/login`; }}
-              className="pill w-full px-5 py-3.5 text-sm font-bold text-foreground bg-secondary hover:bg-secondary/80 flex items-center justify-center gap-2 transition-all active:scale-[0.98]" 
-              style={{ boxShadow: "var(--shadow-soft-sm)" }}
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 21 21">
-                <path fill="#f25022" d="M1 1h9v9H1z"/>
-                <path fill="#00a4ef" d="M1 11h9v9H1z"/>
-                <path fill="#7fba00" d="M11 1h9v9h-9z"/>
-                <path fill="#ffb900" d="M11 11h9v9h-9z"/>
-              </svg>
-              Sign in with Microsoft
-            </button>
           </form>
 
           <AnimatePresence>

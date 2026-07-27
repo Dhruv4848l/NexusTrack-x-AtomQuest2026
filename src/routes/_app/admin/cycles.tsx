@@ -122,7 +122,7 @@ function Cycles() {
                 <div key={label} className="neu-inset rounded-xl px-3 py-2">
                   <div className="flex items-center justify-between">
                     <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{label}</div>
-                    {isOpenNow(o, cl) && <span className="text-[9px] font-bold text-emerald-600">OPEN</span>}
+                    {isOpenNow(o, cl) && <span className="text-[9px] font-bold text-emerald-400">OPEN</span>}
                   </div>
                   <div className="font-semibold text-xs">{new Date(o).toLocaleDateString()} → {new Date(cl).toLocaleDateString()}</div>
                 </div>
